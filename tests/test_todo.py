@@ -15,11 +15,10 @@ class TestTodo(unittest.TestCase):
 
     def setUp(self):
         self.appdata = {}
-
-    def test_add_item(self):
         TodoMananger._load = self._load
         TodoMananger._save = self._save
 
+    def test_add_item(self):
         todo = TodoMananger()
         todo.add_item('new')
 
@@ -41,9 +40,6 @@ class TestTodo(unittest.TestCase):
             todo.add_item()
 
     def test_list(self):
-        TodoMananger._load = self._load
-        TodoMananger._save = self._save
-
         todo = TodoMananger()
         with self.assertRaises(Exception):
             todo.list()
@@ -54,3 +50,11 @@ class TestTodo(unittest.TestCase):
 
         self.assertEqual(self.appdata, todo.list_all())
         self.assertEqual([{"title": "fix projects bugs"}], todo.list('today'))
+
+    def test_delete(self):
+        todo = TodoMananger()
+        todo.add_item('fix projects bugs', notebook='today')
+        todo.add_item('send that email',)
+        todo.delete_notebook('today')
+
+        self.assertEqual({'default': [{'title': 'send that email'}]}, todo.list_all())
