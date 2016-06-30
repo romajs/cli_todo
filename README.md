@@ -14,8 +14,8 @@ mkdir ~/.todo
 echo "{}" > ~/.todo/app.json
 ```
 
-**Use it**
-### Create your fist todo
+## Use it
+#### Create your fist todo
 If you dont use the -nt argument, your todo item will be saved at the *default* notebook.
 ```bash
 todo new -t my first todo item
