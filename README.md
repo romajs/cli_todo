@@ -27,7 +27,7 @@ todo new -t my first todo item -nt today
 ```
 
 ### List
-You can list all items of all notebooks
+You can list all items from all notebooks
 ```bash
 todo list
 ```
