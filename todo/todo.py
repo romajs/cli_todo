@@ -3,11 +3,12 @@ import json
 from os.path import expanduser
 
 _DEFAULT_FILE = expanduser("~") + '/.todo/app.json'
+_DEFAULT_NOTEBOOK = 'default'
 
 
 class TodoMananger(object):
 
-    def __load(self):
+    def _load(self):
         return json.load(open(_DEFAULT_FILE, 'r+'))
 
     def _save(self, app_data):
@@ -15,7 +16,12 @@ class TodoMananger(object):
             appfile.write(json.dumps(app_data))
 
     def add_item(self, title, notebook=None):
-        appdata = self.__load()
+        if not title:
+            raise Exception('you have to provider a title to your todo item')
+
+        notebook = _DEFAULT_NOTEBOOK if not notebook else notebook
+
+        appdata = self._load()
 
         if notebook not in appdata:
             appdata[notebook] = []
@@ -24,10 +30,13 @@ class TodoMananger(object):
         self._save(appdata)
 
     def list_all(self):
-        return self.__load()
+        return self._load()
 
     def list(self, notebook):
-        appdata = self.__load()
+        if not notebook:
+            raise Exception('you have to provider a notebook name')
+
+        appdata = self._load()
         if notebook not in appdata:
             raise Exception('This notebook does not exists')
 
