@@ -1,6 +1,7 @@
 
 import json, os
 from os.path import expanduser
+from . import notify
 
 _DEFAULT_DIR = expanduser("~") + '/.todo'
 _DEFAULT_FILE = _DEFAULT_DIR + '/app.json'
@@ -16,7 +17,7 @@ class TodoMananger(object):
         with open(_DEFAULT_FILE, 'r+') as appfile:
             appfile.write(json.dumps(app_data))
 
-    def add_item(self, title, notebook=None, notify=None):
+    def add_item(self, title, notebook=None, cron=None):
         if not title:
             raise Exception('you have to provider the title to your todo item')
 
@@ -27,15 +28,8 @@ class TodoMananger(object):
         if notebook not in appdata:
             appdata[notebook] = []
 
-        crontab_file = _DEFAULT_DIR + '/crontab'
-        os.system('rm ' + crontab_file)
-
-        cron = notify.replace('*', '\*')
-        crontab_cmd = '%s\t export DBUS_SESSION_BUS_ADDRESS="%s" \&\& %s \\"[TODO] %s\\" \\"%s\\"' \
-            % (cron, 'unix:abstract=/tmp/dbus-zdYB44GDZ8', '/usr/bin/notify-send', notebook, title)
-
-        os.system('echo %s >> %s' % (crontab_cmd, crontab_file))
-        os.system('crontab ' + crontab_file)
+        if cron is not None:
+            notify.schedule(notebook, title, cron)
 
         appdata[notebook].append({'title': title})
         self._save(appdata)
