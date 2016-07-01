@@ -26,10 +26,14 @@ class TodoMananger(object):
         if notebook not in appdata:
             appdata[notebook] = []
 
-        # os.system('crontab -l')
-        cron = '\* \* \* \* \* \*'
-        crontab_cmd = '%s\tnotify-send \\"[TODO] %s\\" \\"%s\\"' % (cron, notebook, title)
+        log_file = expanduser("~") + '/.todo/crontab.log'
         crontab_file = expanduser("~") + '/.todo/crontab'
+        os.system('rm %s' % crontab_file)
+
+        cron = '\* \* \* \* \*'
+        cmd = expanduser("~") + '/.todo/x.sh' #/usr/bin/notify-send
+        crontab_cmd = '%s\t%s \\"[TODO] %s\\" \\"%s\\" \>\> %s' % (cron, cmd, notebook, title, log_file)
+        crontab_cmd = '%s\t%s \>\> %s' % (cron, cmd, log_file)
 
         os.system('echo %s >> %s' % (crontab_cmd, crontab_file))
         os.system('crontab %s' % crontab_file)
