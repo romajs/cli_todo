@@ -26,6 +26,11 @@ Also, you can specify a notebook
 todo new -t my first todo item -nt today
 ```
 
+And finally, you can schedule to receive a notification using cron format time
+```bash
+todo new -t "scheduled todo item" -c "30 12 * * *"
+```
+
 ### List
 You can list all items from all notebooks
 ```bash
