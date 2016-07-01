@@ -2,7 +2,8 @@
 import json, os
 from os.path import expanduser
 
-_DEFAULT_FILE = expanduser("~") + '/.todo/app.json'
+_DEFAULT_DIR = expanduser("~") + '/.todo'
+_DEFAULT_FILE = _DEFAULT_DIR + '/app.json'
 _DEFAULT_NOTEBOOK = 'default'
 
 
@@ -19,25 +20,22 @@ class TodoMananger(object):
         if not title:
             raise Exception('you have to provider the title to your todo item')
 
-        notebook = _DEFAULT_NOTEBOOK if not notebook else notebook
+        notebook = _DEFAULT_NOTEBOOK if not notebook else notebookz
 
         appdata = self._load()
 
         if notebook not in appdata:
             appdata[notebook] = []
 
-        log_file = expanduser("~") + '/.todo/crontab.log'
-        crontab_file = expanduser("~") + '/.todo/crontab'
-        os.system('rm %s' % crontab_file)
+        crontab_file = _DEFAULT_DIR + '/crontab'
+        os.system('rm ' + crontab_file)
 
-        cron = '\* \* \* \* \*'
-        cmd = expanduser("~") + '/.todo/x.sh' #/usr/bin/notify-send
-        crontab_cmd = '%s\t%s \\"[TODO] %s\\" \\"%s\\" \>\> %s' % (cron, cmd, notebook, title, log_file)
-        crontab_cmd = '%s\t%s \>\> %s' % (cron, cmd, log_file)
+        cron = notify.replace('*', '\*')
+        crontab_cmd = '%s\t export DBUS_SESSION_BUS_ADDRESS="%s" \&\& %s \\"[TODO] %s\\" \\"%s\\"' \
+            % (cron, 'unix:abstract=/tmp/dbus-zdYB44GDZ8', '/usr/bin/notify-send', notebook, title)
 
         os.system('echo %s >> %s' % (crontab_cmd, crontab_file))
-        os.system('crontab %s' % crontab_file)
-        os.system('crontab -l')
+        os.system('crontab ' + crontab_file)
 
         appdata[notebook].append({'title': title})
         self._save(appdata)
